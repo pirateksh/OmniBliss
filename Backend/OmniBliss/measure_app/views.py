@@ -4,6 +4,9 @@ from rest_framework.response import Response
 from hrvanalysis import get_time_domain_features, get_frequency_domain_features, \
     get_sampen, get_poincare_plot_features
 
+from profile_app.models import Profile
+from measure_app.models import Priority
+
 FEAT = []
 for i in range(0, 18):
     FEAT.append([0])
@@ -75,4 +78,17 @@ def measure(request):
     else:
         response['msg'] = "Heart-Rate Data does not contain 100 Samples"
         Response(response)
+
+
+@api_view(['GET'])
+@permission_classes([IsAuthenticated])
+def activity_todo(request):
+    user_instance = request.user
+    user_cluster = Profile.objects.get(user=user_instance).cluster
+    qs = Priority.objects.filter(cluster=user_cluster).order_by('-priority')
+    list = []
+    for entry in qs:
+        list.append(entry.activity.title)
+    response = {"activities": list}
+    return Response(response)
 

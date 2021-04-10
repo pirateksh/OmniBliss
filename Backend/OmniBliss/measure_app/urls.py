@@ -6,5 +6,6 @@ urlpatterns = [
     # path('', views.test, name="test"),
 
     path('', views.measure, name="measure"),
+    path('activity_todo/', views.activity_todo, name="activity_todo"),
 ]
 
