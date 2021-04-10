@@ -19,7 +19,9 @@ def measure(request):
     hr = hr.split(" ")
     sample_size = len(hr)
     response = {}
-    if hr and sample_size != 100:
+    print("P:", sample_size, hr)
+    if (hr is not None) and (sample_size != 100):
+        print("IF MEI!!!")
         nn_intervals_list = hr
         nn_intervals_list = [float(i) for i in nn_intervals_list]
         nn_intervals_list = [60000 / i for i in nn_intervals_list]
@@ -54,7 +56,7 @@ def measure(request):
 
         import pickle
         loaded_model = pickle.load(open("dt_stress_classifier.sav", 'rb'))
-        result = loaded_model.predict(row)
+        result = loaded_model.predict([row])
 
         # dict = {
         #     'MEAN_RR': FEAT[0],
@@ -80,14 +82,16 @@ def measure(request):
         # TODO:
         #  FEAT is a List of Lists. Feat[i][0] represents the value of ith feature, 0<=i<=17
         #  Model will consume this list for Stress Detection.
+        print("P:", result)
         if result == 0:
             response['status'] = "No Stress"
         else:
             response['status'] = "Stressed"
         return Response(response)
     else:
+        print("ELSE MEI!!!")
         response['msg'] = "Heart-Rate Data does not contain 100 Samples"
-        Response(response)
+        return Response(response)
 
 
 @api_view(['GET'])
