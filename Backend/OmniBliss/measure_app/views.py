@@ -5,7 +5,7 @@ from hrvanalysis import get_time_domain_features, get_frequency_domain_features,
     get_sampen, get_poincare_plot_features
 
 FEAT = []
-for i in range(0, 18):
+for _ in range(0, 18):
     FEAT.append([0])
 
 
@@ -45,6 +45,14 @@ def measure(request):
         FEAT[16][0] = 1.0 / FEAT[15][0]
         FEAT[17][0] = sampen_dict.get('sampen')
 
+        row = []
+        for __ in range(0, 18):
+            row.append(FEAT[__][0])
+
+        import pickle
+        loaded_model = pickle.load(open("dt_stress_classifier.sav", 'rb'))
+        result = loaded_model.predict(row)
+
         # dict = {
         #     'MEAN_RR': FEAT[0],
         #     'MEDIAN_RR': FEAT[1],
@@ -69,8 +77,10 @@ def measure(request):
         # TODO:
         #  FEAT is a List of Lists. Feat[i][0] represents the value of ith feature, 0<=i<=17
         #  Model will consume this list for Stress Detection.
-
-        response['status'] = "Stressed"
+        if result == 0:
+            response['status'] = "No Stress"
+        else:
+            response['status'] = "Stressed"
         return Response(response)
     else:
         response['msg'] = "Heart-Rate Data does not contain 100 Samples"
