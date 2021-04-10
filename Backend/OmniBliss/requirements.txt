@@ -5,20 +5,9 @@ Django==3.2
 django-countries==7.1
 django-phonenumber-field==5.0.0
 djangorestframework==3.12.4
-<<<<<<< HEAD
-joblib==1.0.1
-numpy==1.20.2
-pandas==1.2.3
-phonenumbers==8.12.21
-python-dateutil==2.8.1
-pytz==2021.1
-scikit-learn==0.24.1
-scipy==1.6.2
-six==1.15.0
-sklearn==0.0
-=======
 future==0.18.2
 hrv-analysis==1.0.4
+joblib==1.0.1
 kiwisolver==1.3.1
 matplotlib==3.4.1
 nolds==0.5.2
@@ -30,9 +19,10 @@ pyerfa==1.7.2
 pyparsing==2.4.7
 python-dateutil==2.8.1
 pytz==2021.1
+scikit-learn==0.24.1
 scipy==1.6.2
 six==1.15.0
->>>>>>> 859e9766385c3de42f92034f31cc9b026019ed6f
+sklearn==0.0
 sqlparse==0.4.1
 threadpoolctl==2.1.0
 typing-extensions==3.7.4.3
