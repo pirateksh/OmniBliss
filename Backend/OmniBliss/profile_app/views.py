@@ -6,7 +6,7 @@ from rest_framework.generics import get_object_or_404
 from rest_framework.response import Response
 from rest_framework.permissions import IsAuthenticated
 User = get_user_model()
-from .models import Profile
+from .models import Profile, Cluster
 from .serializers import ViewProfileSerializer, UpdateProfileSerializer
 
 
@@ -26,6 +26,7 @@ def view(request, **kwargs):
 
 
 def dec_to_bin_list_padded(num):
+    print("P-3:")
     res = [int(i) for i in list('{0:0b}'.format(num))]
     if len(res) > 9:
         return [0, 0, 0, 0, 0, 0, 0, 0, 0]
@@ -34,13 +35,16 @@ def dec_to_bin_list_padded(num):
     for i in range(rem):
         res.append(0)
     res.reverse()
+    print("P-2:", res)
     return res
 
 
 def hobbies_parser(hobby_list):
+    print("P-1:")
     hobby_1 = (4 * hobby_list[0]) + (2 * hobby_list[1]) + (1 * hobby_list[2])
     hobby_2 = (4 * hobby_list[3]) + (2 * hobby_list[4]) + (1 * hobby_list[5])
     hobby_3 = (4 * hobby_list[6]) + (2 * hobby_list[7]) + (1 * hobby_list[8])
+    print("P0:")
     return hobby_1, hobby_2, hobby_3
 
 
@@ -76,7 +80,7 @@ def update(request, **kwargs):
 
     """
     age = int(request.data.get('age'))
-    gender = int(request.data.get('request'))
+    gender = int(request.data.get('gender'))
     income = int(request.data.get('annual_salary'))
     occupation = int(request.data.get('occupation'))
     hobbies = int(request.data.get('hobbies'))
@@ -89,10 +93,36 @@ def update(request, **kwargs):
         profile_instance = Profile.objects.get(user_id=id)
 
         # Added by Kshitiz
-        cluster = clusterify(age=age, gender=gender, income=income, occupation=occupation, hobbies=hobbies)
+
+        # print(request.data)
+        # print("AGE:", request.data.get('age'), type(request.data.get('age')))
 
 
-        serializer = UpdateProfileSerializer(profile_instance, data=request.data)
+        print("P1:")
+        cluster_value = clusterify(age=age, gender=gender, income=income, occupation=occupation, hobbies=hobbies)
+        print("P2:", cluster_value)
+        cluster_name = ""
+        if cluster_value == 0:
+            cluster_name = "c0"
+        elif cluster_value == 1:
+            cluster_name = "c1"
+        elif cluster_value == 2:
+            cluster_name = "c2"
+        else:
+            cluster_name = "c3"
+        cluster_instance = Cluster.objects.get(title=cluster_name)
+        print("INST:", cluster_instance.title)
+
+        dict = {
+            'age' : age,
+            'gender': gender,
+            'annual_salary': income,
+            'occupation': occupation,
+            'hobbies': hobbies,
+            'cluster': cluster_instance.id,
+        }
+
+        serializer = UpdateProfileSerializer(profile_instance, data=dict)
         if serializer.is_valid():
             instance = serializer.save()
             response['msg'] = "Successfully Updated Profile"

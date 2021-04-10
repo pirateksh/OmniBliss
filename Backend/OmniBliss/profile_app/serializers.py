@@ -6,11 +6,11 @@ from .models import Profile
 class ViewProfileSerializer(serializers.ModelSerializer):
     class Meta:
         model = Profile
-        fields = ['user', 'age', 'gender', 'occupation', 'annual_salary']
+        fields = ['user', 'age', 'gender', 'occupation', 'annual_salary', 'cluster']
 
 
 class UpdateProfileSerializer(serializers.ModelSerializer):
     class Meta:
         model = Profile
-        fields = ['age', 'hobbies', 'gender', 'occupation', 'annual_salary']
+        fields = ['age', 'hobbies', 'gender', 'occupation', 'annual_salary', 'cluster']
 
