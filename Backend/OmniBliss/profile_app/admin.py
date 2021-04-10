@@ -4,7 +4,7 @@ from .models import Profile, Occupation, Cluster, Activity
 
 class ProfileAdmin(admin.ModelAdmin):
     model = Profile
-    list_display = ['user', 'age', 'gender', 'occupation']
+    list_display = ['user', 'age', 'gender', 'occupation', 'cluster', 'annual_salary']
 
 
 class OccupationAdmin(admin.ModelAdmin):

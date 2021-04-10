@@ -30,7 +30,7 @@ def view(request, **kwargs):
 def update(request, **kwargs):
     """
         request params:
-        age, gender, phone, occupation, hobbies
+        age, gender, annual_salary, occupation, hobbies
     """
     username = kwargs['username']
     user_instance = get_object_or_404(User, username=username)
