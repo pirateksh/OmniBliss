@@ -4,23 +4,27 @@
 <a href="https://hack36.com"> <img src="http://bit.ly/BuiltAtHack36" height=20px> </a>
 
 ## Introduction:
-Official Repository of team EnigmaHaxx for Hack36 4.0
+Continuing our legacy from **OmniEther (Hack 36 3.0)**, we present to you all this year's project, **OmniBliss**.
 <br/>
-Continuing our legacy from OmniEther (Hack 36 3.0), we present to you all this year's project, OmniBliss.
 ![Image of Homepage](./Images/OmniBlissLogo.jpeg?raw=true)
 
 ## Table of Contents:
+1. Technology Stack
+2. Survey
+3. Problem Statement
+4. Proposed Solution
+5. Implementation Details
+6. Wow Factor
+7. Future Work
+8. Contributors
 
 ## Technology Stack:
-* MI Band Series(Bluetooth 5.0)
-* Numpy, Pandas
-* Scikit-Learn
-* Matplotlib
-* Django Web Framework
-* Django Rest Framework
-* Flutter
-* Dart
-* Git
+* **Hardware Realted** - `MI Band Series and Bluetooth 5.0`
+* **Backend Related** - `Django Web Framework and Django Rest Framework`
+* **Frontend Related** - `Flutter and Dart`
+* **Machine Learning Related** - `Numpy, Pandas, Scikit-Learn, Matplotlib and Seaborn`
+* **Collaboration Related** - `Git and Github`
+
 
 ## Survey (By kff.org)
 * During the pandemic, about 4 in 10 adults in the U.S. have reported
@@ -28,14 +32,11 @@ symptoms of anxiety or depressive disorder.
 * This number increased from one in ten adults who reported these
 symptoms from January to June 2019.
 * Similar is the case with citizens of other countries as well.
-Problem Statement
-* Devising a way to tackle these increasing levels of stress and anxiety
-among the general population and create an environment of Bliss.
 
 
 ## Problem Statement
 * Devising a way to tackle these increasing levels of stress and anxiety
-among the general population and create an environment of Bliss.
+among the general population and create an environment of **Bliss**.
 
 
 ## Proposed Solution
