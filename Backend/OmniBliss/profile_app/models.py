@@ -15,13 +15,22 @@ Gender_Choices = (
 class Occupation(models.Model):
     title = models.CharField(max_length=100)
 
+    def __str__(self):
+        return "{}".format(self.title)
+
 
 class Cluster(models.Model):
     title = models.CharField(max_length=5)
 
+    def __str__(self):
+        return "{}".format(self.title)
+
 
 class Activity(models.Model):
     title = models.CharField(max_length=100)
+
+    def __str__(self):
+        return "{}".format(self.title)
 
 
 class Profile(models.Model):
@@ -34,6 +43,7 @@ class Profile(models.Model):
     is_updated = models.BooleanField(default=False)
     # country = CountryField()
     cluster = models.ForeignKey(Cluster, null=True, on_delete=models.SET_NULL, default=None)
+    annual_salary = models.PositiveBigIntegerField(null=True, default=None)
 
     def __str__(self):
         return "{} {}".format(self.user,"Profile")
