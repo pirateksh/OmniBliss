@@ -7,6 +7,7 @@
 Continuing our legacy from **OmniEther (Hack 36 3.0)**, we present to you all this year's project, **OmniBliss**.
 <br/>
 **Presentation Link** - https://drive.google.com/file/d/1qg6ScsP_o1TiJP33aHn7aX6UACl-a4Bi/view?usp=sharing
+<br>
 **Youtube Video Link** - https://www.youtube.com/watch?v=rtIGD-64NwI
 
 ![Image of Homepage](./Images/OmniBlissLogo.jpeg?raw=true)
