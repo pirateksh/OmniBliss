@@ -1,10 +1,15 @@
+import 'dart:convert';
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:omni_bliss/HomePage.dart';
 import 'package:omni_bliss/app_usage.dart';
+import 'package:omni_bliss/bluetooth/blue.dart';
 import 'package:omni_bliss/ui/widgets/custom_shape.dart';
 import 'package:omni_bliss/ui/widgets/customappbar.dart';
 import 'package:omni_bliss/ui/widgets/responsive_ui.dart';
-
+import 'package:http/http.dart' as http;
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:smart_select/smart_select.dart' show S2Choice, SmartSelect;
 import 'package:smart_select/smart_select.dart';
 
@@ -13,16 +18,47 @@ class Profile extends StatefulWidget {
   _ProfileState createState() => _ProfileState();
 }
 
+class UserProfile {
+  int age;
+  int annual_salary;
+  int hobbies;
+  String gender;
+  int occupation;
+
+  UserProfile(
+      this.age, this.annual_salary, this.gender, this.hobbies, this.occupation);
+
+  factory UserProfile.fromJson(dynamic json) {
+    return UserProfile(
+        json['age'] as int,
+        json['annual_salary'] as int,
+        json['gender'] as String,
+        json['hobbies'] as int,
+        json['occupation'] as int);
+  }
+
+  @override
+  String toString() {
+    return '{ ${this.age} ,${this.annual_salary},${this.gender},${this.hobbies},${this.occupation}}';
+  }
+}
+
 class _ProfileState extends State<Profile> {
   double _height;
   double _width;
   double _pixelRatio;
   bool _large;
   bool _medium;
-  String _genderValue, _occupationValue = '', _day = 'fri';
+  String _genderValue = '', _occupationValue = '';
   List<String> Interests_ = [];
   int selectedIndex = 1;
   double _ageValue = 20;
+  double _salaryValue = 100000;
+  bool isLoading;
+  void initState() {
+    super.initState();
+    isLoading = true;
+  }
 
   List<S2Choice<String>> Occupations_ = [
     S2Choice<String>(
@@ -76,6 +112,41 @@ class _ProfileState extends State<Profile> {
     _pixelRatio = MediaQuery.of(context).devicePixelRatio;
     _large = ResponsiveWidget.isScreenLarge(_width, _pixelRatio);
     _medium = ResponsiveWidget.isScreenMedium(_width, _pixelRatio);
+    if (this.isLoading == true) {
+      loadDataFromServer().then((userProfile) {
+        setState(() {
+          this.isLoading = false;
+          print("hurray");
+          if (userProfile.gender.toString().isEmpty == false) {
+            this._genderValue = userProfile.gender.toString();
+          }
+          if (userProfile.occupation.toString().isEmpty == false) {
+            this._occupationValue = userProfile.occupation.toString();
+          }
+          if (userProfile.age.toString().isEmpty == false) {
+            this._ageValue = userProfile.age.roundToDouble();
+          }
+          if (userProfile.annual_salary.toString().isEmpty == false) {
+            this._salaryValue = userProfile.annual_salary.roundToDouble();
+          }
+          if (userProfile.hobbies.toString() != null &&
+              userProfile.hobbies != null) {
+            int num = userProfile.hobbies;
+            int count = 0;
+            List<String> interestsIndex = [];
+            while (num > 0) {
+              if (num % 2 == 1) {
+                interestsIndex.add(count.toString());
+              }
+              double num1 = num / 2;
+              num = num1.floor();
+              count++;
+            }
+            this.Interests_ = interestsIndex;
+          }
+        });
+      });
+    }
 
     return Material(
       child: Scaffold(
@@ -111,6 +182,10 @@ class _ProfileState extends State<Profile> {
               BottomNavigationBarItem(
                 icon: Icon(Icons.receipt),
                 title: Text("Usage"),
+              ),
+              BottomNavigationBarItem(
+                icon: Icon(Icons.favorite_border),
+                title: Text("Stress"),
               ),
             ],
             currentIndex: selectedIndex,
@@ -163,26 +238,28 @@ class _ProfileState extends State<Profile> {
     return Container(
       margin: EdgeInsets.only(
           left: _width / 12.0, right: _width / 12.0, top: _height / 20.0),
-      child: Form(
-        child: Column(
-          children: <Widget>[
-            genderFormField(context),
-            SizedBox(
-              height: _height / 60.0,
-              width: _width / 1.6,
-            ),
+      child: this.isLoading
+          ? CircularProgressIndicator()
+          : Form(
+              child: Column(
+                children: <Widget>[
+                  genderFormField(context),
+                  SizedBox(
+                    height: _height / 60.0,
+                    width: _width / 1.6,
+                  ),
 //            ageFormField(),
 //            SizedBox(height: _height/ 60.0),
-            occupationFormField(context),
-            SizedBox(height: _height / 60.0),
-            interestsFormField(),
-            SizedBox(height: _height / 60.0),
-            ageFormField(),
-            SizedBox(height: _height / 60.0),
-            salaryFormField(),
-          ],
-        ),
-      ),
+                  occupationFormField(context),
+                  SizedBox(height: _height / 60.0),
+                  interestsFormField(),
+                  SizedBox(height: _height / 60.0),
+                  ageFormField(),
+                  SizedBox(height: _height / 60.0),
+                  salaryFormField(),
+                ],
+              ),
+            ),
     );
   }
 
@@ -192,6 +269,7 @@ class _ProfileState extends State<Profile> {
       SmartSelect<String>.single(
         title: 'Gender',
         choiceItems: Gender,
+        value: _genderValue,
         onChange: (selected) => setState(() => _genderValue = selected.value),
         modalType: S2ModalType.bottomSheet,
         choiceType: S2ChoiceType.chips,
@@ -217,6 +295,7 @@ class _ProfileState extends State<Profile> {
       SmartSelect<String>.single(
         title: 'Occupations',
         choiceItems: Occupations_,
+        value: _occupationValue,
         onChange: (selected) =>
             setState(() => _occupationValue = selected.value),
         modalType: S2ModalType.fullPage,
@@ -243,8 +322,9 @@ class _ProfileState extends State<Profile> {
       SmartSelect<String>.multiple(
         title: 'Interests',
         choiceItems: Interest,
+        value: Interests_,
         onChange: (selected) => setState(() {
-          print(selected.value);
+//          print(selected.value);
           return Interests_ = selected.value;
         }),
         modalType: S2ModalType.fullPage,
@@ -275,6 +355,10 @@ class _ProfileState extends State<Profile> {
       Navigator.of(context)
           .push(MaterialPageRoute(builder: (context) => app_usage()));
     }
+    if (value == 3) {
+      Navigator.of(context)
+          .push(MaterialPageRoute(builder: (context) => FlutterBlueApp()));
+    }
   }
 
   Widget ageFormField() {
@@ -300,5 +384,44 @@ class _ProfileState extends State<Profile> {
     );
   }
 
-  salaryFormField() {}
+  Widget salaryFormField() {
+    return Column(
+      children: <Widget>[
+        const SizedBox(height: 7),
+        Text(
+          "Your Salary is",
+        ),
+        Slider(
+          value: _salaryValue,
+          min: 1,
+          max: 10000000,
+          divisions: 100000,
+          label: _salaryValue.round().abs().toString(),
+          onChanged: (double value) {
+            setState(() {
+              _salaryValue = value;
+            });
+          },
+        )
+      ],
+    );
+  }
+
+  Future<UserProfile> loadDataFromServer() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+
+    final response = await http.get(
+      Uri.https('omnibliss-backend2.herokuapp.com',
+          '/api/accounts/' + prefs.getString('username') + '/'),
+      headers: <String, String>{
+        'Content-Type': 'application/json; charset=UTF-8',
+        'Authorization': 'Token ' + prefs.getString('token'),
+      },
+    );
+    UserProfile userProfile = UserProfile.fromJson(jsonDecode(response.body));
+    print(userProfile.toString() + '&&');
+    return userProfile;
+  }
+
+//  salaryFormField() {}
 }
